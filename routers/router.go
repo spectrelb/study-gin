@@ -2,7 +2,11 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	jwt "github.com/spectrelb/study-gin/middleware"
+	"github.com/spectrelb/study-gin/routers/api"
 	v1 "github.com/spectrelb/study-gin/routers/api/v1"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 
 	"github.com/spectrelb/study-gin/pkg/setting"
 )
@@ -16,7 +20,11 @@ func InitRouter() *gin.Engine {
 
 	gin.SetMode(setting.RunMode)
 
+	r.GET("/auth", api.GetAuth)
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	apiv1 := r.Group("/api/v1")
+	apiv1.Use(jwt.JWT())
 	{
 		//获取标签列表
 		apiv1.GET("/tags", v1.GetTags)
